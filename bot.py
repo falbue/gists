@@ -14,6 +14,8 @@ dp = Dispatcher()
 # Обработчик команды
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
+    user_id = message.chat.id
+    logger.debug(f"id: {user_id} | Команда: /start")
     text, keyboard = get_menu("main")
     await message.answer(text, reply_markup=keyboard)
 
@@ -22,7 +24,7 @@ async def start_command(message: types.Message):
 async def handle_callback(callback: types.CallbackQuery):
     data = callback.data
     user_id = callback.message.chat.id
-    logger.debug(f"user id: {user_id} | {data}")
+    logger.debug(f"id: {user_id} | Кнопка: {data}")
     
     if data == "notification":
         await callback.answer("Это всплывающее уведомление!", show_alert=True)

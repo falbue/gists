@@ -6,13 +6,17 @@ import json
 from utils import *
 
 
-def load_menus(filename="local.json"): # загрузка меню
+def load_bot(level=''): # загрузка меню
+    filename="local.json"
     with open(filename, "r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+        data = data[level]
+        return data
 
 def create_keyboard(menu_data, format_data=None):
     builder = InlineKeyboardBuilder()
     return_builder = InlineKeyboardBuilder()
+    variable_buttons = load_bot("buttons")
     
     # Обработка buttons, если это строка (название функции)
     if "keyboard" in menu_data:
@@ -35,18 +39,18 @@ def create_keyboard(menu_data, format_data=None):
                 else:
                     builder.button(text=button_text, callback_data=callback_data)
 
-    builder.adjust(2)
+    builder.adjust(menu_data.get("row", 2))
     keyboard = builder.as_markup()
     
     if "return" in menu_data:   # Добавляем кнопку возврата если есть
-        return_builder.button(text="🔙 Назад", callback_data=f"return|{menu_data['return']}")
+        return_builder.button(text=variable_buttons['return'], callback_data=f"return|{menu_data['return']}")
         keyboard.inline_keyboard.append(return_builder.as_markup().inline_keyboard[0])
 
     return keyboard
 
 def get_menu(menu_name): # получение нужного меню
-    menus = load_menus()
-    menu_data = menus["menu"].get(menu_name.split("|")[0])
+    menus = load_bot(level='menu')
+    menu_data = menus.get(menu_name.split("|")[0])
     template = menu_name
 
     if "|" in menu_name:

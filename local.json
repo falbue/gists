@@ -14,11 +14,23 @@
 			"text":"Ваше число: {number}",
 			"keyboard":{"random":"🎲 Новое число"},
 			"return":"main"
+		},
+
+		"none_menu":{
+			"text":"Меню `{menu_name}` не найдено",
+			"return":"main"
 		}
 	},
 
 	"buttons":{
 		"return":"🔙 Назад",
 		"notification":"Прочитано"
+	},
+
+	"commands":{
+		"start":{
+			"description":"Перезапуск бота",
+			"menu":"main"
+		}
 	}
 }

@@ -14,7 +14,7 @@ def markdown(text, full=False):  # экранирование
             escaped_text += f'\\{char}'
         else:
             escaped_text += char
-    return f"*{escaped_text}*"
+    return escaped_text
 
 
 def default_values():

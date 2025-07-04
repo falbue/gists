@@ -12,12 +12,17 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2"))
 dp = Dispatcher()
 
 # Обработчик команды
-@dp.message(Command("start"))
+@dp.message()
 async def start_command(message: types.Message):
-    user_id = message.chat.id
-    logger.debug(f"id: {user_id} | Команда: /start")
-    text, keyboard = get_menu("main")
-    await message.answer(text, reply_markup=keyboard)
+    if message.text[0] == "/":
+        user_id = message.chat.id
+        logger.debug(f"id: {user_id} | Команда: {message.text}")
+        text, keyboard = get_menu(None, command=message.text)
+        if text is None:
+            # await message.delete(user_id, message.message_id)
+            await message.delete()
+        else:
+            await message.answer(text, reply_markup=keyboard)
 
 # Обработчики нажатий на кнопки
 @dp.callback_query()

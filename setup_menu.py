@@ -73,7 +73,13 @@ def create_keyboard(menu_data, format_data=None):
     
     return builder.as_markup()
 
-def get_menu(menu_name): # получение нужного меню
+def get_menu(menu_name, command=None): # получение нужного меню
+    if command:
+        commands = load_bot(level='commands')
+        menu_name = commands.get(command.replace("/",""))
+        if menu_name is None:
+            return None, None
+        menu_name = menu_name.get("menu")
     menus = load_bot(level='menu')
     menu_data = menus.get(menu_name.split("|")[0])
     template = menu_name
@@ -81,7 +87,7 @@ def get_menu(menu_name): # получение нужного меню
     if "|" in menu_name:
         prefix = menu_name.split("|")[0] + "|"
         
-        for key in menus["menu"]:
+        for key in menus:
             if key.startswith(prefix):
                 menu_data = (menus["menu"].get(key))
                 template = key
@@ -90,7 +96,7 @@ def get_menu(menu_name): # получение нужного меню
 
     
     if not menu_data:
-        menu_data = menus["menu"].get("none_menu")
+        menu_data = menus.get("none_menu")
 
     text = menu_data["text"]
     format_data = parse_bot_data(template, menu_name)

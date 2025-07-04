@@ -3,6 +3,8 @@ import os
 import json
 import random
 
+from logging_config import logger
+
 def markdown(text, full=False):  # экранирование
     if full == True: special_characters = r'*|~[]()>#+-=|{}._!'
     else: special_characters = r'>#+-={}.|!'

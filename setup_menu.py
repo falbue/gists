@@ -15,18 +15,18 @@ def create_keyboard(menu_data, format_data=None):
     return_builder = InlineKeyboardBuilder()
     
     # Обработка buttons, если это строка (название функции)
-    if "buttons" in menu_data:
-        if isinstance(menu_data["buttons"], str):
+    if "keyboard" in menu_data:
+        if isinstance(menu_data["keyboard"], str):
             # Получаем функцию по имени и вызываем её
-            buttons_func = globals().get(menu_data["buttons"])
+            buttons_func = globals().get(menu_data["keyboard"])
             if buttons_func and callable(buttons_func):
                 buttons_data = buttons_func()
                 if isinstance(buttons_data, dict):
-                    menu_data["buttons"] = buttons_data
+                    menu_data["keyboard"] = buttons_data
         
         # Добавляем основные кнопки (теперь buttons точно словарь)
-        if isinstance(menu_data["buttons"], dict):
-            for callback_data, button_text in menu_data["buttons"].items():
+        if isinstance(menu_data["keyboard"], dict):
+            for callback_data, button_text in menu_data["keyboard"].items():
                 button_text = formatting_text(button_text, format_data)
                 callback_data = formatting_text(callback_data, format_data)
                 if callback_data.startswith("url:"):

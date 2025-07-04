@@ -4,11 +4,8 @@ from aiogram.client.default import DefaultBotProperties
 
 import asyncio
 
-from dotenv import load_dotenv
-
 from setup_menu import *
 
-load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2"))
@@ -25,7 +22,7 @@ async def start_command(message: types.Message):
 async def handle_callback(callback: types.CallbackQuery):
     data = callback.data
     user_id = callback.message.chat.id
-    print(user_id, data)
+    logger.debug(f"user id: {user_id} | {data}")
     
     if data == "notification":
         await callback.answer("Это всплывающее уведомление!", show_alert=True)
@@ -45,5 +42,5 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    print("Бот запущен")
+    logger.info("Бот запущен")
     asyncio.run(main())

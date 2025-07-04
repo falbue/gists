@@ -22,7 +22,7 @@ def default_values():
     return data
 
 
-def formatting_text(text, format_data=None):
+def formatting_text(text, format_data=None): # форматирование текста
     values = {**default_values(), **(format_data or {})}
         
     start = text.find('{')

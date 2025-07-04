@@ -13,12 +13,11 @@ def load_bot(level=''): # загрузка меню
         data = data[level]
         return data
 
-def create_keyboard(menu_data, format_data=None):
+def create_keyboard(menu_data, format_data=None): # создание клавиатуры
     builder = InlineKeyboardBuilder()
     return_builder = InlineKeyboardBuilder()
     variable_buttons = load_bot("buttons")
     
-    # Обработка keyboard, если это строка (название функции)
     if "keyboard" in menu_data:
         if isinstance(menu_data["keyboard"], str):
             buttons_func = globals().get(menu_data["keyboard"])
@@ -41,8 +40,7 @@ def create_keyboard(menu_data, format_data=None):
                 button_text = formatting_text(button_text, format_data)
                 callback_data = formatting_text(callback_data, format_data)
                 
-                # Создаем кнопку
-                if callback_data.startswith("url:"):
+                if callback_data.startswith("url:"): # Создаем кнопку
                     url = callback_data[4:]
                     button = InlineKeyboardButton(text=button_text, url=url)
                 else:
@@ -73,6 +71,12 @@ def create_keyboard(menu_data, format_data=None):
     
     return builder.as_markup()
 
+def create_text(menu_data, template, format_data): # создание текста
+    text = menu_data["text"]
+    text = formatting_text(text, format_data)
+    text = markdown(text)
+    return text
+
 def get_menu(menu_name, command=None): # получение нужного меню
     if command:
         commands = load_bot(level='commands')
@@ -93,17 +97,13 @@ def get_menu(menu_name, command=None): # получение нужного ме�
                 template = key
                 break
 
+    format_data = parse_bot_data(template, menu_name)
+    format_data["menu_name"] = menu_name
 
-    
     if not menu_data:
         menu_data = menus.get("none_menu")
 
-    text = menu_data["text"]
-    format_data = parse_bot_data(template, menu_name)
-    format_data["menu_name"] = menu_name
-    text = formatting_text(text, format_data)
-    text = markdown(text)
-    
+    text = create_text(menu_data, template, format_data)
     keyboard = create_keyboard(menu_data, format_data)
     
     return text, keyboard

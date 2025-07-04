@@ -19,7 +19,6 @@ async def start_command(message: types.Message):
         logger.debug(f"id: {user_id} | Команда: {message.text}")
         text, keyboard = get_menu(None, command=message.text)
         if text is None:
-            # await message.delete(user_id, message.message_id)
             await message.delete()
         else:
             await message.answer(text, reply_markup=keyboard)

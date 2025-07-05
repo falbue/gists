@@ -17,8 +17,8 @@ def setup_logging():
     
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
     
-    if not DEBUG:
-        LOG_FILE = os.path.join("app.log")
+    if DEBUG == "False":
+        LOG_FILE = os.path.join("bot.log")
         file_handler = logging.FileHandler(LOG_FILE)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)

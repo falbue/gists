@@ -2,10 +2,11 @@ import aiosqlite
 import json
 import sqlite3
 import asyncio
+from logging_config import logger
 
 DB_PATH = "database.db"
 
-async def SQL_request(query, params=(), fetch='all', jsonify_result=False):
+async def SQL_request(query, params=(), fetch=None, jsonify_result=False):
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.cursor() as cursor:
             try:
@@ -52,7 +53,7 @@ async def SQL_request(query, params=(), fetch='all', jsonify_result=False):
                     
             except sqlite3.Error as e:
                 await db.rollback()
-                print(f"Ошибка SQL: {e}")
+                logger.error(f"Ошибка SQL: {e}")
                 raise
 
     # Преобразование в JSON при необходимости
@@ -79,15 +80,16 @@ async def create_tables():
 
 asyncio.run(create_tables())
 
+
 async def create_user(bot_data):
     try: bot_data = bot_data.message
     except: pass
 
     try:
-        telegram_id = bot_data.from_user.id
-        first_name = bot_data.from_user.first_name
-        last_name = bot_data.from_user.last_name if hasattr(bot_data.from_user, 'last_name') else None
-        username = bot_data.from_user.username if hasattr(bot_data.from_user, 'username') else None
+        telegram_id = bot_data.chat.id
+        first_name = bot_data.chat.first_name
+        last_name = bot_data.chat.last_name
+        username = bot_data.chat.username
         message_id = bot_data.message_id
     
         await SQL_request('''
@@ -101,9 +103,10 @@ async def create_user(bot_data):
         ''', (telegram_id, first_name, last_name, username, message_id))
 
         return True
-    except:
+    except Exception as e:
+        logger.error(f"Ошибка SQL при регистрации: {e}")
         return False
 
 async def get_user(telegram_id):
-    user = await SQL_request('SELECT * FROM TTA WHERE telegram_id=?', (telegram_id,))
+    user = await SQL_request('SELECT * FROM TTA WHERE telegram_id=?', (telegram_id,), "one")
     return user

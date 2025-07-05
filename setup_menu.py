@@ -71,35 +71,47 @@ def create_keyboard(menu_data, format_data=None): # создание клави�
     
     return builder.as_markup()
 
-def create_text(menu_data, template, format_data): # создание текста
+def create_text(menu_data, format_data): # создание текста
     text = menu_data["text"]
     text = formatting_text(text, format_data)
     text = markdown(text)
     return text
 
-def get_menu(callback):
+async def get_menu(callback):
     tta_data = {}
     try:
         menu_name = callback.data 
         message = callback.message
     except:
-        print(callback)
         message = callback
         command = message.text
         commands = load_bot(level='commands')
-        menu_name = commands.get(command.replace("/",""))
-        if menu_name is None:
+        command_data = commands.get(command.replace("/",""))
+        if command_data is None:
             return None
+        menu_name = command_data.get("menu")
 
-        tta_data["menu_name"] = menu_name.get("menu")
-        tta_data["telegram_id"] = message.chat.id
+    tta_data["menu_name"] = menu_name
+    tta_data["telegram_id"] = message.chat.id
 
-    return get_menu(tta_data["menu_name"])
+    user = await get_user(tta_data['telegram_id'])
+    if not user:
+        result = await create_user(message)
+        if not result:
+            logger.error(f"Не удалось зарегестировать пользователя {tta_data['telegram_id']}")
+        else:
+            user = await get_user(tta_data['telegram_id'])
+            logger.info(f"Зарегестирован новый пользователь: {tta_data['telegram_id']}")
 
-def create_menu(tta_data): # получение нужного меню
+    tta_data['user'] = user
+
+    return await create_menu(tta_data)
+
+async def create_menu(tta_data): # получение нужного меню
     menu_name = tta_data['menu_name']
-    user = get_user(tta_data['telegram_id'])
     menus = load_bot(level='menu')
+    if "return|" in menu_name:
+        menu_name = menu_name.replace("return|", "")
     menu_data = menus.get(menu_name.split("|")[0])
     template = menu_name
 
@@ -114,11 +126,12 @@ def create_menu(tta_data): # получение нужного меню
 
     format_data = parse_bot_data(template, menu_name)
     format_data["menu_name"] = menu_name
+    format_data = {**format_data, **(tta_data["user"] or {})}
 
     if not menu_data:
         menu_data = menus.get("none_menu")
 
-    text = create_text(menu_data, template, format_data)
+    text = create_text(menu_data, format_data)
     keyboard = create_keyboard(menu_data, format_data)
     
     return {"text":text, "keyboard":keyboard}

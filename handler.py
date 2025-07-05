@@ -17,8 +17,9 @@ async def start_command(message: types.Message):
     if message.text[0] == "/":
         user_id = message.chat.id
         logger.debug(f"id: {user_id} | Команда: {message.text}")
-        menu = get_menu(message)
-        if text is None:
+        menu = await get_menu(message)
+
+        if menu is None:
             await message.delete()
         else:
             await message.answer(menu["text"], reply_markup=menu["keyboard"])
@@ -35,7 +36,7 @@ async def handle_callback(callback: types.CallbackQuery):
         return
 
     else:
-        menu = get_menu(data)
+        menu = await get_menu(callback)
     
     await callback.message.edit_text(menu["text"], reply_markup=menu["keyboard"])
     await callback.answer()

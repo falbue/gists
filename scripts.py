@@ -31,10 +31,13 @@ def get_gists(tta_data):
 	owner = 'falbue'
 	url = f"https://api.github.com/users/{owner}/gists"
 	response = requests.get(url)
-	gist_data = response.json()
-	keyboard = {}
-	for gist in gist_data:
-		keyboard[f'gist|{gist["id"]}'] = gist["description"]
+	if response.status_code == 200:
+		gist_data = response.json()
+		keyboard = {}
+		for gist in gist_data:
+			keyboard[f'gist|{gist["id"]}'] = gist["description"]
+	else:
+		keyboard = {"error":"Гисты не найдены"}
 	return keyboard
 
 def gist_files(tta_data):

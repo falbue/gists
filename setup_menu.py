@@ -77,13 +77,28 @@ def create_text(menu_data, template, format_data): # создание текст
     text = markdown(text)
     return text
 
-def get_menu(menu_name, command=None): # получение нужного меню
-    if command:
+def get_menu(callback):
+    tta_data = {}
+    try:
+        menu_name = callback.data 
+        message = callback.message
+    except:
+        print(callback)
+        message = callback
+        command = message.text
         commands = load_bot(level='commands')
         menu_name = commands.get(command.replace("/",""))
         if menu_name is None:
-            return None, None
-        menu_name = menu_name.get("menu")
+            return None
+
+        tta_data["menu_name"] = menu_name.get("menu")
+        tta_data["telegram_id"] = message.chat.id
+
+    return get_menu(tta_data["menu_name"])
+
+def create_menu(tta_data): # получение нужного меню
+    menu_name = tta_data['menu_name']
+    user = get_user(tta_data['telegram_id'])
     menus = load_bot(level='menu')
     menu_data = menus.get(menu_name.split("|")[0])
     template = menu_name
@@ -106,4 +121,4 @@ def get_menu(menu_name, command=None): # получение нужного ме�
     text = create_text(menu_data, template, format_data)
     keyboard = create_keyboard(menu_data, format_data)
     
-    return text, keyboard
+    return {"text":text, "keyboard":keyboard}

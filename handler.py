@@ -17,11 +17,11 @@ async def start_command(message: types.Message):
     if message.text[0] == "/":
         user_id = message.chat.id
         logger.debug(f"id: {user_id} | Команда: {message.text}")
-        text, keyboard = get_menu(None, command=message.text)
+        menu = get_menu(message)
         if text is None:
             await message.delete()
         else:
-            await message.answer(text, reply_markup=keyboard)
+            await message.answer(menu["text"], reply_markup=menu["keyboard"])
 
 # Обработчики нажатий на кнопки
 @dp.callback_query()
@@ -33,14 +33,11 @@ async def handle_callback(callback: types.CallbackQuery):
     if data == "notification":
         await callback.answer("Это всплывающее уведомление!", show_alert=True)
         return
-    
-    elif data.split("|")[0] == "return":
-        text, keyboard = get_menu(data.split("|")[1])
 
     else:
-        text, keyboard = get_menu(data)
+        menu = get_menu(data)
     
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(menu["text"], reply_markup=menu["keyboard"])
     await callback.answer()
 
 # Запуск бота

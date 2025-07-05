@@ -4,6 +4,7 @@ import json
 import random
 
 from logging_config import logger
+from database import SQL_request
 
 def markdown(text, full=False):  # экранирование
     if full == True: special_characters = r'*|~[]()>#+-=|{}._!'

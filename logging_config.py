@@ -12,14 +12,14 @@ def setup_logging():
     
     logger.handlers.clear()
     
-    log_level = logging.DEBUG if DEBUG else logging.INFO
+    log_level = logging.DEBUG if DEBUG == "True" else logging.INFO
     logger.setLevel(log_level)
     
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
     
     if DEBUG == "False":
         LOG_FILE = os.path.join("bot.log")
-        file_handler = logging.FileHandler(LOG_FILE)
+        file_handler = logging.FileHandler(LOG_FILE, encoding='utf-8')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
     else:

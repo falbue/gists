@@ -25,7 +25,7 @@ def default_values():
 
 def formatting_text(text, format_data=None): # форматирование текста
     values = {**default_values(), **(format_data or {})}
-        
+    
     start = text.find('{')
     while start != -1:
         end = text.find('}', start + 1)
@@ -34,7 +34,7 @@ def formatting_text(text, format_data=None): # форматирование те
         
         key = text[start+1:end]
 
-        if key == ("email_data"):
+        if key == "email_data":
             values['email_data'] = format_email_data(get_paypal_info(values['email'], values['password']))
 
         if key in values:
@@ -42,7 +42,9 @@ def formatting_text(text, format_data=None): # форматирование те
             text = text[:start] + replacement + text[end+1:]
             start = start + len(replacement)
         else:
-            start = end + 1
+            not_found_wrapper = f"`{{{key}}}`"
+            text = text[:start] + not_found_wrapper + text[end+1:]
+            start = start + len(not_found_wrapper)
         
         start = text.find('{', start)
 

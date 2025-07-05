@@ -57,7 +57,7 @@ def create_keyboard(menu_data, format_data=None): # создание клави�
     if "return" in menu_data: # Добавляем кнопку возврата если нужно
         return_builder.button(
             text=variable_buttons['return'],
-            callback_data=f"return|{menu_data['return']}"
+            callback_data=formatting_text(f"return|{menu_data['return']}", format_data)
         )
         builder.row(*return_builder.buttons)  # Кнопка возврата всегда в новой строке
     

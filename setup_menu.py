@@ -7,7 +7,7 @@ from utils import *
 
 
 def load_bot(level=''): # загрузка меню
-    filename="local.json"
+    filename="bot.json"
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
         data = data[level]

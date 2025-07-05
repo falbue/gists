@@ -5,6 +5,8 @@ import json
 
 from utils import *
 
+from scripts import *
+
 
 def load_bot(level=''): # загрузка меню
     filename="bot.json"
@@ -112,13 +114,25 @@ async def create_menu(tta_data): # получение нужного меню
         
         for key in menus:
             if key.startswith(prefix):
-                menu_data = (menus["menu"].get(key))
+                menu_data = (menus.get(key))
                 template = key
                 break
 
+    if not menu_data:
+        menu_data = menus.get("none_menu")
+
     format_data = parse_bot_data(template, menu_name)
-    format_data["menu_name"] = menu_name
     format_data = {**format_data, **(tta_data["user"] or {})}
+    format_data["menu_name"] = menu_name
+
+    if menu_data.get("function"):
+        custom_function = globals().get(menu_data["function"])
+        if custom_function and callable(custom_function):
+            custom_format = custom_function(format_data)
+            if isinstance(custom_format, dict):
+                format_data = {**format_data, **(custom_format or {})}
+
+
 
     if menu_data.get("keyboard"):
         if isinstance(menu_data["keyboard"], str):
@@ -128,8 +142,6 @@ async def create_menu(tta_data): # получение нужного меню
                 if isinstance(buttons_data, dict):
                     menu_data["keyboard"] = buttons_data
 
-    if not menu_data:
-        menu_data = menus.get("none_menu")
 
     text = create_text(menu_data, format_data)
     keyboard = create_keyboard(menu_data, format_data)

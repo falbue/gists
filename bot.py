@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    load_dotenv("/root/env/.gists")
     TOKEN = os.getenv("BOT_TOKEN")
     DEBUG = os.getenv("DEBUG")
     TelegramTextApp.start(TOKEN, "bot.json", "database.db", debug=DEBUG)

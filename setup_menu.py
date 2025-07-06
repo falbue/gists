@@ -134,6 +134,19 @@ async def create_menu(tta_data): # получение нужного меню
     format_data = {**format_data, **(tta_data["user"] or {})}
     format_data["menu_name"] = menu_name
 
+    
+    if tta_data.get('bot_input'):
+        if tta_data['bot_input'].get("function"):
+            bot_input = tta_data["bot_input"]
+            custom_function = globals().get(bot_input.get('function'))
+            if custom_function and callable(custom_function):
+                if asyncio.iscoroutinefunction(custom_function):
+                    custom_format = await custom_function(format_data)
+                else:
+                    custom_format = custom_function(format_data)
+                if isinstance(custom_format, dict):
+                    format_data = {**format_data, **(custom_format or {})}
+
     if menu_data.get("function"):
         custom_function = globals().get(menu_data["function"])
         if custom_function and callable(custom_function):
@@ -157,17 +170,6 @@ async def create_menu(tta_data): # получение нужного меню
                 if isinstance(buttons_data, dict):
                     menu_data["keyboard"] = buttons_data
 
-    if tta_data.get('bot_input'):
-        if tta_data['bot_input'].get("function"):
-            bot_input = tta_data["bot_input"]
-            custom_function = globals().get(bot_input.get('function'))
-            if custom_function and callable(custom_function):
-                if asyncio.iscoroutinefunction(custom_function):
-                    custom_format = await custom_function(format_data)
-                else:
-                    custom_format = custom_function(format_data)
-                if isinstance(custom_format, dict):
-                    format_data = {**format_data, **(custom_format or {})}
 
     text = create_text(menu_data, format_data)
     keyboard = create_keyboard(menu_data, format_data)

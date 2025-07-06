@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 
 if __name__ == "__main__":
-    load_dotenv("/root/env/.gists")
+    load_dotenv()
     TOKEN = os.getenv("BOT_TOKEN")
     print(f"Токен: {TOKEN}")
     DEBUG = os.getenv("DEBUG")

@@ -15,6 +15,40 @@ def load_bot(level=''): # загрузка меню
         data = data[level]
         return data
 
+async def get_bot_data(callback, bot_input=None):
+    tta_data = {}
+    if bot_input:
+        menu_name = bot_input['menu']
+        tta_data['bot_input'] = bot_input
+        message = callback
+
+    elif hasattr(callback, 'message'):
+        menu_name = callback.data 
+        message = callback.message
+    else:
+        message = callback
+        command = message.text
+        commands = load_bot(level='commands')
+        command_data = commands.get(command.replace("/",""))
+        if command_data is None:
+            return None
+        menu_name = command_data.get("menu")
+
+    tta_data["menu_name"] = menu_name
+    tta_data["telegram_id"] = message.chat.id
+
+    user = await get_user(tta_data['telegram_id'])
+    if not user:
+        result = await create_user(message)
+        if not result:
+            logger.error(f"Не удалось зарегестировать пользователя {tta_data['telegram_id']}")
+        else:
+            user = await get_user(tta_data['telegram_id'])
+            logger.info(f"Зарегестирован новый пользователь: {tta_data['telegram_id']}")
+
+    tta_data['user'] = user
+    return tta_data
+
 def create_keyboard(menu_data, format_data=None): # создание клавиатуры
     builder = InlineKeyboardBuilder()
     return_builder = InlineKeyboardBuilder()
@@ -72,39 +106,36 @@ def create_text(menu_data, format_data): # создание текста
     return text
 
 async def get_menu(callback, bot_input=None):
-    tta_data = {}
-    if bot_input:
-        menu_name = bot_input['menu']
-        tta_data['bot_input'] = bot_input
-        message = callback
-
-    elif hasattr(callback, 'message'):
-        menu_name = callback.data 
-        message = callback.message
-    else:
-        message = callback
-        command = message.text
-        commands = load_bot(level='commands')
-        command_data = commands.get(command.replace("/",""))
-        if command_data is None:
-            return None
-        menu_name = command_data.get("menu")
-
-    tta_data["menu_name"] = menu_name
-    tta_data["telegram_id"] = message.chat.id
-
-    user = await get_user(tta_data['telegram_id'])
-    if not user:
-        result = await create_user(message)
-        if not result:
-            logger.error(f"Не удалось зарегестировать пользователя {tta_data['telegram_id']}")
-        else:
-            user = await get_user(tta_data['telegram_id'])
-            logger.info(f"Зарегестирован новый пользователь: {tta_data['telegram_id']}")
-
-    tta_data['user'] = user
-
+    tta_data = await get_bot_data(callback, bot_input) 
     return await create_menu(tta_data)
+
+async def get_mini_menu(callback):
+    tta_data = await get_bot_data(callback)
+    menu_name = tta_data['menu_name'].replace("mini|","")
+    menus = load_bot(level='mini_menu')
+
+    text = menus.get(menu_name.split("|")[0])
+    template = menu_name
+
+    if "|" in menu_name:
+        prefix = menu_name.split("|")[0] + "|"
+        
+        for key in menus:
+            if key.startswith(prefix):
+                text = (menus.get(key))
+                template = key
+                break
+
+    format_data = parse_bot_data(template, menu_name)
+    format_data = {**format_data, **(tta_data["user"] or {})}
+    format_data["menu_name"] = menu_name
+
+    if not text:
+        text = ""
+
+    text = formatting_text(text, format_data)
+    return text
+
 
 async def create_menu(tta_data): # получение нужного меню
     menu_name = tta_data['menu_name']
@@ -134,7 +165,7 @@ async def create_menu(tta_data): # получение нужного меню
     format_data = {**format_data, **(tta_data["user"] or {})}
     format_data["menu_name"] = menu_name
 
-    
+
     if tta_data.get('bot_input'):
         if tta_data['bot_input'].get("function"):
             bot_input = tta_data["bot_input"]

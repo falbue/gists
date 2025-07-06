@@ -67,6 +67,8 @@ async def get_my_gists(tta_data):
     try:
         gists = await fetch_github_data("https://api.github.com/gists", tta_data)
         data = {f'gist|{g["id"]}': g["description"] for g in gists}
+        if not data:
+            return {"mini|none_gist": "А где?"}
         return data
     except:
         return {"add_token": "Добавить токен авторизации"}

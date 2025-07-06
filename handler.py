@@ -36,8 +36,9 @@ async def handle_callback(callback: types.CallbackQuery, state: FSMContext):
     user_id = callback.message.chat.id
     logger.debug(f"id: {user_id} | Кнопка: {data}")
     
-    if data == "notification":
-        await callback.answer("Это всплывающее уведомление!", show_alert=True)
+    if data.split("|")[0] == "mini":
+        text = await get_mini_menu(callback)
+        await callback.answer(text, show_alert=True)
         return
 
     menu = await get_menu(callback)

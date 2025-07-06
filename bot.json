@@ -25,7 +25,7 @@
 			"return":"gist|{gist_id}"
 		},
 		"add_token":{
-			"text":"Создай токен в [настройках github](https://github.com/settings/tokens/new) и добавь его в ботаn\n\nОбязательно установи параметр `gist - Create gists`",
+			"text":"Создай токен в [настройках github](https://github.com/settings/tokens/new) и добавь его в бота\n\nОбязательно установи параметр `gist - Create gists`",
 			"input":{
 				"data":"github_token",
 				"menu":"main",
@@ -33,6 +33,11 @@
 			},
 			"return":"main"
 		}
+		
+	},
+
+	"mini_menu":{
+		"none_gist":"Ваши гисты не загрузились?\n\nПричина - их просто нет"
 	},
 
 	"buttons":{

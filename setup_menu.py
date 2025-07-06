@@ -71,12 +71,17 @@ def create_text(menu_data, format_data): # создание текста
     text = markdown(text)
     return text
 
-async def get_menu(callback):
+async def get_menu(callback, bot_input=None):
     tta_data = {}
-    try:
+    if bot_input:
+        menu_name = bot_input['menu']
+        tta_data['bot_input'] = bot_input
+        message = callback
+
+    elif hasattr(callback, 'message'):
         menu_name = callback.data 
         message = callback.message
-    except:
+    else:
         message = callback
         command = message.text
         commands = load_bot(level='commands')
@@ -108,6 +113,7 @@ async def create_menu(tta_data): # получение нужного меню
         menu_name = menu_name.replace("return|", "")
     menu_data = menus.get(menu_name.split("|")[0])
     template = menu_name
+    logger.debug(f"Открываемое меню: {menu_name}")
 
     if "|" in menu_name:
         prefix = menu_name.split("|")[0] + "|"
@@ -122,28 +128,49 @@ async def create_menu(tta_data): # получение нужного меню
         menu_data = menus.get("none_menu")
 
     format_data = parse_bot_data(template, menu_name)
+    if tta_data.get('bot_input'):
+        bot_input = tta_data["bot_input"]
+        format_data[bot_input["data"]] = bot_input.get("input_text", None)
     format_data = {**format_data, **(tta_data["user"] or {})}
     format_data["menu_name"] = menu_name
 
     if menu_data.get("function"):
         custom_function = globals().get(menu_data["function"])
         if custom_function and callable(custom_function):
-            custom_format = custom_function(format_data)
+            if asyncio.iscoroutinefunction(custom_function):
+                custom_format = await custom_function(format_data)
+            else:
+                custom_format = custom_function(format_data)
+            
             if isinstance(custom_format, dict):
                 format_data = {**format_data, **(custom_format or {})}
-
-
 
     if menu_data.get("keyboard"):
         if isinstance(menu_data["keyboard"], str):
             buttons_func = globals().get(menu_data["keyboard"])
             if buttons_func and callable(buttons_func):
-                buttons_data = buttons_func(format_data)
+                if asyncio.iscoroutinefunction(buttons_func):
+                    buttons_data = await buttons_func(format_data)
+                else:
+                    buttons_data = buttons_func(format_data)
+                
                 if isinstance(buttons_data, dict):
                     menu_data["keyboard"] = buttons_data
 
+    if tta_data.get('bot_input'):
+        if tta_data['bot_input'].get("function"):
+            bot_input = tta_data["bot_input"]
+            custom_function = globals().get(bot_input.get('function'))
+            if custom_function and callable(custom_function):
+                if asyncio.iscoroutinefunction(custom_function):
+                    custom_format = await custom_function(format_data)
+                else:
+                    custom_format = custom_function(format_data)
+                if isinstance(custom_format, dict):
+                    format_data = {**format_data, **(custom_format or {})}
 
     text = create_text(menu_data, format_data)
     keyboard = create_keyboard(menu_data, format_data)
+    menu_input = menu_data.get("input", None)
     
-    return {"text":text, "keyboard":keyboard}
+    return {"text":text, "keyboard":keyboard, "input":menu_input}

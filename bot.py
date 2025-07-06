@@ -127,4 +127,4 @@ async def get_token(tta_data):
     if not token:
         return {"token":"Токен не найден"}
     else:
-        return {"token":f"`{token["token"]}`"}
+        return {"token":f"`{token['token']}`"}

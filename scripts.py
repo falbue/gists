@@ -14,7 +14,6 @@ async def create_tokens():
 
 async def get_token(tta_data):
     user_id = tta_data["id"]
-    print(user_id)
     result = await SQL_request("SELECT name FROM sqlite_master WHERE type='table' AND name='github_tokens';")
     if not result:
         await create_tokens()
@@ -95,3 +94,16 @@ async def code_file(tta_data):
         return {"code": file_data["content"]}
     except:
         return {"error": f"Ошибка при получении кода: {str(e)}"}
+
+async def save_token(tta_data):
+    user_id = tta_data["id"]
+    token = tta_data.get("github_token")
+    if token:
+        token_data = await SQL_request("SELECT * FROM github_tokens WHERE user_id=?", (user_id,), 'one')
+        if token_data:
+            await SQL_request("UPDATE github_tokens SET token = ? WHERE user_id = ?", (token, user_id))
+        else:
+            await SQL_request('INSERT INTO github_tokens (user_id, token) VALUES (?, ?)', (user_id, token))
+            return
+    else:
+        return {"error_text":"Не верный токен"}

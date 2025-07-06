@@ -1,6 +1,16 @@
 import requests
 import json
-from database import SQL_request
+from TelegramTextApp.database import SQL_request
+import TelegramTextApp
+import os
+from dotenv import load_dotenv
+
+
+if __name__ == "__main__":
+    load_dotenv()
+    TOKEN = os.getenv("BOT_TOKEN")
+    DEBUG = os.getenv("DEBUG")
+    TelegramTextApp.start(TOKEN, "bot.json", "database.db", debug=DEBUG)
 
 async def create_tokens():
     # Пользователи

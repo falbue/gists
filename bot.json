@@ -48,7 +48,7 @@
 			}
 		},
 
-		"token:":{
+		"token":{
 			"text":"{token}",
 			"function":"get_token",
 			"return":"main"
@@ -70,6 +70,7 @@
 			"description":"Перезапуск бота",
 			"menu":"main"
 		},
+
 		"new_token":{
 			"description":"Вставить новый токен",
 			"menu":"new_token"

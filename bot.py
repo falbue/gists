@@ -4,7 +4,7 @@ from TelegramTextApp.database import SQL_request
 import TelegramTextApp
 import os
 from dotenv import load_dotenv
-
+os.path.exists('data') or os.mkdir('data')
 
 if __name__ == "__main__":
     load_dotenv()

@@ -50,7 +50,7 @@
 
 		"token":{
 			"text":"{token}",
-			"function":"get_token",
+			"function":"get_user_token",
 			"return":"main"
 		}
 		

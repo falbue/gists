@@ -4,13 +4,12 @@ from TelegramTextApp.database import SQL_request
 import TelegramTextApp
 import os
 from dotenv import load_dotenv
-os.path.exists('data') or os.mkdir('data')
 
 if __name__ == "__main__":
     load_dotenv()
     TOKEN = os.getenv("BOT_TOKEN")
     DATABASE = os.getenv("DATABASE")
-    print(database)
+    print(DATABASE)
     print(f"Токен: {TOKEN}")
     DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
     TelegramTextApp.start(TOKEN, "bot.json", DATABASE, debug=DEBUG)
@@ -123,7 +122,7 @@ async def save_token(tta_data):
     else:
         return {"error_text":"Не верный токен"}
 
-async def get_token(tta_data):
+async def get_user_token(tta_data):
     user_id = tta_data["id"]
     token = await SQL_request("SELECT token FROM github_tokens WHERE user_id=?", (user_id,), 'one')
     if not token:

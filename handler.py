@@ -10,7 +10,7 @@ from setup_menu import *
 import update_bot
 
 TOKEN = os.getenv("BOT_TOKEN")
-asyncio.run(update_bot.update_bot_info(TOKEN, load_bot("bot")))
+asyncio.run(update_bot.update_bot_info(TOKEN, load_bot()))
 
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2"))
@@ -42,6 +42,10 @@ async def handle_callback(callback: types.CallbackQuery, state: FSMContext):
     if data.split("|")[0] == "mini":
         text = await get_mini_menu(callback)
         await callback.answer(text, show_alert=True)
+        return
+
+    if data == 'notification':
+        await callback.message.delete()
         return
 
     menu = await get_menu(callback)

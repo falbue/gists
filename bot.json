@@ -2,7 +2,7 @@
 	"bot":{
 		"name":"Gist",
 		"short_description":"Эксперимент для Github Gist",
-		"description":"Пока что, Вы можете просматривать только свои гисты"
+		"description":"Пока что, Вы можете просматривать только свои гисты",
 	},
 
 	"menu":{
@@ -30,6 +30,7 @@
 			"function":"code_file",
 			"return":"gist|{gist_id}"
 		},
+
 		"add_token":{
 			"text":"Создай токен в [настройках github](https://github.com/settings/tokens/new) и добавь его в бота\n\nОбязательно установи параметр `gist - Create gists`",
 			"input":{
@@ -38,6 +39,14 @@
 				"function":"save_token"
 			},
 			"return":"main"
+		},
+
+		"new_token":{
+			"text":"Вы действительно хотите изменить токен?",
+			"keyboard":{
+				"add_token":"Изменить токен",
+				"notification":"\\Отмена"
+			}
 		}
 		
 	},
@@ -55,6 +64,10 @@
 		"start":{
 			"description":"Перезапуск бота",
 			"menu":"main"
+		},
+		"token":{
+			"description":"Вставить новый токен",
+			"menu":"new_token"
 		}
 	}
 }

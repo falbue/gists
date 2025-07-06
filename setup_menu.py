@@ -8,11 +8,12 @@ from utils import *
 from scripts import *
 
 
-def load_bot(level=''): # загрузка меню
+def load_bot(level=None): # загрузка меню
     filename="bot.json"
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
-        data = data[level]
+        if level:
+            data = data[level]
         return data
 
 async def get_bot_data(callback, bot_input=None):

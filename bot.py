@@ -10,6 +10,7 @@ if __name__ == "__main__":
     load_dotenv()
     TOKEN = os.getenv("BOT_TOKEN")
     DATABASE = os.getenv("DATABASE")
+    print(database)
     print(f"Токен: {TOKEN}")
     DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
     TelegramTextApp.start(TOKEN, "bot.json", DATABASE, debug=DEBUG)

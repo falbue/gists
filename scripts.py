@@ -1,74 +1,97 @@
 import requests
 import json
+from database import SQL_request
 
-def gist_data(tta_data):
-	gist_id = tta_data["gist_id"]
-	url = f"https://api.github.com/gists/{gist_id}"
-	response = requests.get(url)
-	gist_data = response.json()
-	
-	description = gist_data.get("description", "")
-	num_files = len(gist_data["files"])
-	updated_at = gist_data["updated_at"]
-	comments = gist_data["comments"]
-	owner = f"https://github.com/users/{gist_data['owner']['login']}"
-	created_at = gist_data["created_at"]
-	forks_count = len(gist_data.get("forks", []))
-	
-	data = {
-	    "gist_description": description,
-	    "gist_num_files": num_files,
-	    "gist_updated_at": updated_at,
-	    "gist_forks_count": forks_count,
-	    "gist_comments": comments,
-	    "gist_created_at": created_at,
-	    "gist_owner": owner
-	}
+async def create_tokens():
+    # Пользователи
+    await SQL_request('''
+    CREATE TABLE IF NOT EXISTS github_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT,
+        FOREIGN KEY (user_id) REFERENCES TTA(id)
+    )''')
 
-	return data
+async def get_token(tta_data):
+    user_id = tta_data["id"]
+    print(user_id)
+    result = await SQL_request("SELECT name FROM sqlite_master WHERE type='table' AND name='github_tokens';")
+    if not result:
+        await create_tokens()
+    token_data = await SQL_request("SELECT * FROM github_tokens WHERE user_id=?", (user_id,), 'one')
+    if token_data:
+        return token_data["token"]
+    else:
+        return None
 
-def get_gists(tta_data):
-	owner = 'falbue'
-	url = f"https://api.github.com/users/{owner}/gists"
-	response = requests.get(url)
-	if response.status_code == 200:
-		gist_data = response.json()
-		keyboard = {}
-		for gist in gist_data:
-			keyboard[f'gist|{gist["id"]}'] = gist["description"]
-	else:
-		keyboard = {"error":"Гисты не найдены"}
-	return keyboard
 
-def gist_files(tta_data):
-	gist_id = tta_data["gist_id"]
-	url = f"https://api.github.com/gists/{gist_id}"
-	response = requests.get(url)
-	gist_data = response.json()
-	
-	files = (gist_data["files"])
-	data = {}
+async def fetch_github_data(url, tta_data):
+    TOKEN = await get_token(tta_data)
+    if not TOKEN:
+        return None
 
-	for filename in files:
-		file = files[filename]
-		data[f'gist_file|{gist_id}|{file["filename"]}'] = file["filename"]
+    """Выполняет запрос к GitHub API с авторизацией и возвращает JSON-данные."""
+    headers = {"Authorization": f"token {TOKEN}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Генерирует исключение для HTTP-ошибок
+    return response.json()
 
-	return data
+async def gist_data(tta_data):
+    """Получает метаданные гиста по его ID."""
+    try:
+        gist_id = tta_data["gist_id"]
+        gist = await fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
+        
+        return {
+            "gist_description": gist.get("description", ""),
+            "gist_num_files": len(gist["files"]),
+            "gist_updated_at": gist["updated_at"],
+            "gist_forks_count": len(gist.get("forks", [])),
+            "gist_comments": gist["comments"],
+            "gist_created_at": gist["created_at"],
+            "gist_owner": f"https://github.com/users/{gist['owner']['login']}"
+        }
+    except:
+        return {"error": f"GitHub API error: {str(e)}"}
 
-def code_file(tta_data):
-	# print(tta_data)
-	gist_id = tta_data["gist_id"]
-	url = f"https://api.github.com/gists/{gist_id}"
-	response = requests.get(url)
-	gist_data = response.json()
+async def get_gists(tta_data):
+    """Получает гисты указанного пользователя (по умолчанию 'falbue')."""
+    owner = tta_data.get("owner", "falbue")  # Поддержка кастомного владельца
+    try:
+        gists = await fetch_github_data(f"https://api.github.com/users/{owner}/gists", tta_data)
+        return {f'gist|{g["id"]}': g["description"] for g in gists}
+    except:
+        return {"error": "Гисты не найдены"}
 
-	files = (gist_data["files"])
-	data = {}
+async def get_my_gists(tta_data):
+    """НОВАЯ ФУНКЦИЯ: Получает гисты текущего пользователя по токену."""
+    try:
+        gists = await fetch_github_data("https://api.github.com/gists", tta_data)
+        data = {f'gist|{g["id"]}': g["description"] for g in gists}
+        return data
+    except:
+        return {"add_token": "Добавить токен авторизации"}
 
-	code = files[tta_data['gist_file']]["content"]
+async def gist_files(tta_data):
+    """Получает список файлов в гисте."""
+    try:
+        gist_id = tta_data["gist_id"]
+        gist = await fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
+        return {
+            f'gist_file|{gist_id}|{file["filename"]}': file["filename"]
+            for file in gist["files"].values()
+        }
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Ошибка при получении файлов: {str(e)}"}
 
-	data["code"] = code
-
-	return data
-
-# code_file({"gist_id":"42bccfd10353c810408b8535dcc20816", "filename":"Dockerfile"})
+async def code_file(tta_data):
+    """Получает содержимое файла из гиста."""
+    try:
+        gist_id = tta_data["gist_id"]
+        gist = await fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
+        file_data = gist["files"].get(tta_data["gist_file"])
+        if not file_data:
+            return {"error": "Файл не найден в гисте"}
+        return {"code": file_data["content"]}
+    except:
+        return {"error": f"Ошибка при получении кода: {str(e)}"}

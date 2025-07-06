@@ -46,6 +46,12 @@
 				"add_token":"Изменить токен",
 				"notification":"\\Отмена"
 			}
+		},
+
+		"token:":{
+			"text":"{token}",
+			"function":"get_token",
+			"return":"main"
 		}
 		
 	},
@@ -64,9 +70,14 @@
 			"description":"Перезапуск бота",
 			"menu":"main"
 		},
-		"token":{
+		"new_token":{
 			"description":"Вставить новый токен",
 			"menu":"new_token"
+		},
+
+		"token":{
+			"description":"Получить текущий токен",
+			"menu":"token"
 		}
 	}
 }

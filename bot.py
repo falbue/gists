@@ -120,3 +120,11 @@ async def save_token(tta_data):
             return
     else:
         return {"error_text":"Не верный токен"}
+
+async def get_token(tta_data):
+    user_id = tta_data["id"]
+    token = await SQL_request("SELECT token FROM github_tokens WHERE user_id=?", (user_id,), 'one')
+    if not token:
+        return {"token":"Токен не найден"}
+    else:
+        return {"token":f"`{token["token"]}`"}

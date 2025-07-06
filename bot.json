@@ -1,4 +1,10 @@
 {
+	"bot":{
+		"name":"Gist",
+		"short_description":"Эксперимент для Github Gist",
+		"description":"Пока что, Вы можете просматривать только свои гисты"
+	},
+
 	"menu":{
 
 		"none_menu":{

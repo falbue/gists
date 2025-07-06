@@ -7,8 +7,11 @@ from aiogram.fsm.state import State, StatesGroup
 import asyncio
 
 from setup_menu import *
+import update_bot
 
 TOKEN = os.getenv("BOT_TOKEN")
+asyncio.run(update_bot.update_bot_info(TOKEN, load_bot("bot")))
+
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2"))
 dp = Dispatcher()

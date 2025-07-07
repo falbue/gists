@@ -12,12 +12,17 @@
 			"return":"main"
 		},
 
+		"tta_loading_menu":{
+			"text":"Загрузка..."
+		},
+
 		"main":{
 			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com/falbue)",
 			"keyboard":"get_my_gists"
 		},
 
 		"gist|{gist_id}":{
+			"loading":true,
 			"text":"{gist_description}",
 			"function":"gist_data",
 			"keyboard":"gist_files",
@@ -25,6 +30,7 @@
 		},
 
 		"gist_file|{gist_id}|{gist_file}":{
+			"loading":true,
 			"text":"```\n{code}\n```",
 			"function":"code_file",
 			"return":"gist|{gist_id}"

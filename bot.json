@@ -8,6 +8,7 @@
 	"menu":{
 
 		"none_menu":{
+			"loading":true,
 			"text":"Меню `{menu_name}` не найдено",
 			"return":"main"
 		},

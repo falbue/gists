@@ -18,6 +18,7 @@
 		},
 
 		"main":{
+   "loading":true
 			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com/falbue)",
 			"keyboard":"get_my_gists"
 		},

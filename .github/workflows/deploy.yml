@@ -23,13 +23,13 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             rm -rf /tmp/.env  # Удаляем, если это директория
-      - name: отправка .prod.env
+      - name: отправка .production
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ".prod.env"
+          source: ".production"
           target: "/tmp/.env"
       
       

@@ -1,6 +1,6 @@
 {
 	"bot":{
-		"name":"Gists",
+		"name":"Code snippets",
 		"short_description":"Эксперимент для Github Gists",
 		"description":"Бот на стадии альфа теста\n\nПо всем вопросам @falbue"
 	},
@@ -19,7 +19,7 @@
 
 		"main":{
    "loading":true,
-			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com/falbue)",
+			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
 			"keyboard":"get_my_gists"
 		},
 

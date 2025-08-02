@@ -1,6 +1,6 @@
 {
 	"bot":{
-		"name":"Code snippets",
+		"name":"Gists",
 		"short_description":"Эксперимент для Github Gists",
 		"description":"Бот на стадии альфа теста\n\nПо всем вопросам @falbue"
 	},

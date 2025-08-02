@@ -1,6 +1,6 @@
 # gists
 
-Бот для Telegram, позволяющий просматривать ваши GitHub Gists прямо в чате!
+[Бот для Telegram](https://t.me/gists_github_bot), позволяющий просматривать ваши GitHub Gists прямо в чате!
 
 > **gists** — это телеграм-бот, созданный с помощью [TelegramTextApp (TTA)](https://github.com/falbue/TelegramTextApp), который помогает удобно управлять вашими записями Gist без необходимости заходить на сайт GitHub.
 

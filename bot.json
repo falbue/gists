@@ -18,7 +18,7 @@
 		},
 
 		"main":{
-   "loading":true,
+			"loading":true,
 			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
 			"keyboard":"get_my_gists"
 		},
@@ -60,17 +60,23 @@
 			"text":"{token}",
 			"function":"get_user_token",
 			"return":"main"
+		},
+
+		"none_gist":{
+			"popup":{
+				"text":"Ваши гисты не загрузились?\n\nПричина - их просто нет",
+				"size":"small",
+				"menu_block":true
+			}
 		}
 		
 	},
 
-	"mini_menu":{
-		"none_gist":"Ваши гисты не загрузились?\n\nПричина - их просто нет"
-	},
 
 	"buttons":{
 		"return":"‹ Назад"
 	},
+
 
 	"commands":{
 		"start":{

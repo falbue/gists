@@ -1,7 +1,7 @@
 {
 	"bot":{
-		"name":"Gists",
-		"short_description":"Эксперимент для Github Gists",
+		"name":"Gist",
+		"short_description":"Эксперимент для Github Gist",
 		"description":"Бот на стадии альфа теста\n\nПо всем вопросам @falbue"
 	},
 
@@ -44,6 +44,9 @@
 				"data":"github_token",
 				"menu":"main",
 				"function":"save_token"
+			},
+			"keyboard":{
+				"url:https://github.com/settings/tokens/new":"Создать токен"
 			},
 			"return":"main"
 		},

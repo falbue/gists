@@ -20,7 +20,10 @@
 		"main":{
 			"loading":true,
 			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
-			"keyboard":"get_my_gists"
+			"keyboard":{
+				"function":"get_my_gists",
+				"url:https://gist.github.com":"\\Создать gist"
+			}
 		},
 
 		"gist|{gist_id}":{
@@ -68,9 +71,15 @@
 		"none_gist":{
 			"popup":{
 				"text":"Ваши гисты не загрузились?\n\nПричина - их просто нет",
-				"size":"small",
+				"size":"big",
 				"menu_block":true
 			}
+		},
+
+
+		"info":{
+			"text":"Бот создан на [TTA](https://github.com/falbue/TelegramTextApp)\nGithub бота: [тык](https://github.com/falbue/gists)",
+			"return":"main"
 		}
 		
 	},

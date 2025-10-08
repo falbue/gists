@@ -83,7 +83,7 @@
 
 	"variables": {
         "tta_return": "‹ Назад",
-        "tta_loading":"loading..."
+        "tta_loading":"Загрузка..."
     },
 
 

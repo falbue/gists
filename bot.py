@@ -1,19 +1,11 @@
 import requests
 import json
-from TelegramTextApp.database import SQL_request
+from TelegramTextApp.utils.database import SQL_request
 import TelegramTextApp
 import os
-from dotenv import load_dotenv
 
-if __name__ == "__main__":
-    load_dotenv()
-    TOKEN = os.getenv("BOT_TOKEN")
-    DATABASE = os.getenv("DATABASE")
-    DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
-    TelegramTextApp.start(TOKEN, "bot.json", DATABASE, debug=DEBUG)
 
 def create_tokens():
-    # Пользователи
     SQL_request('''
     CREATE TABLE IF NOT EXISTS github_tokens (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,15 +30,12 @@ def fetch_github_data(url, tta_data):
     TOKEN = get_token(tta_data)
     if not TOKEN:
         return None
-
-    """Выполняет запрос к GitHub API с авторизацией и возвращает JSON-данные."""
     headers = {"Authorization": f"token {TOKEN}"}
     response = requests.get(url, headers=headers)
-    response.raise_for_status()  # Генерирует исключение для HTTP-ошибок
+    response.raise_for_status()
     return response.json()
 
 def gist_data(tta_data):
-    """Получает метаданные гиста по его ID."""
     try:
         gist_id = tta_data["gist_id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
@@ -63,17 +52,7 @@ def gist_data(tta_data):
     except:
         return {"error": f"GitHub API error: {str(e)}"}
 
-def get_gists(tta_data):
-    """Получает гисты указанного пользователя (по умолчанию 'falbue')."""
-    owner = tta_data.get("owner", "falbue")  # Поддержка кастомного владельца
-    try:
-        gists = fetch_github_data(f"https://api.github.com/users/{owner}/gists", tta_data)
-        return {f'gist|{g["id"]}': g["description"] for g in gists}
-    except:
-        return {"error": "Гисты не найдены"}
-
-def get_my_gists(tta_data):
-    """НОВАЯ ФУНКЦИЯ: Получает гисты текущего пользователя по токену."""
+def get_gists(tta_data):    
     try:
         gists = fetch_github_data("https://api.github.com/gists", tta_data)
         data = {f'gist|{g["id"]}': g["description"] for g in gists}
@@ -83,8 +62,7 @@ def get_my_gists(tta_data):
     except:
         return {"add_token": "Добавить токен авторизации"}
 
-def gist_files(tta_data):
-    """Получает список файлов в гисте."""
+def gist_files(tta_data):  #список файлов в гисте
     try:
         gist_id = tta_data["gist_id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
@@ -95,8 +73,7 @@ def gist_files(tta_data):
     except requests.exceptions.RequestException as e:
         return {"error": f"Ошибка при получении файлов: {str(e)}"}
 
-def code_file(tta_data):
-    """Получает содержимое файла из гиста."""
+def code_file(tta_data):  #содержимое файла из гиста
     try:
         gist_id = tta_data["gist_id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
@@ -105,7 +82,7 @@ def code_file(tta_data):
             return {"error": "Файл не найден в гисте"}
         return {"code": file_data["content"]}
     except:
-        return {"error": f"Ошибка при получении кода: {str(e)}"}
+        return {"code": f"Ошибка при получении кода: {str(e)}"}
 
 def save_token(tta_data):
     user_id = tta_data["id"]
@@ -127,3 +104,6 @@ def get_user_token(tta_data):
         return {"token":"Токен не найден"}
     else:
         return {"token":f"`{token['token']}`"}
+
+if __name__ == "__main__":
+    TelegramTextApp.start()

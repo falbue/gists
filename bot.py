@@ -1,6 +1,7 @@
 import requests
 import json
 from TelegramTextApp.utils.database import SQL_request
+from TelegramTextApp.utils.utils import print_json
 import TelegramTextApp
 import os
 
@@ -37,7 +38,7 @@ def fetch_github_data(url, tta_data):
 
 def gist_data(tta_data):
     try:
-        gist_id = tta_data["gist_id"]
+        gist_id = fetch_github_data("https://api.github.com/gists", tta_data)[int(tta_data["gist_id"])]["id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
         
         return {
@@ -49,13 +50,14 @@ def gist_data(tta_data):
             "gist_created_at": gist["created_at"],
             "gist_owner": f"https://github.com/users/{gist['owner']['login']}"
         }
-    except:
-        return {"error": f"GitHub API error: {str(e)}"}
+    except Exception as e:
+        print(f"Возникла ошибка: {e}")
+        return {"{gist_description}": f"GitHub API error: {str(e)}"}
 
 def get_gists(tta_data):    
     try:
         gists = fetch_github_data("https://api.github.com/gists", tta_data)
-        data = {f'gist|{g["id"]}': g["description"] for g in gists}
+        data = {f'gist|{index}': g["description"] for index, g in enumerate(gists)}
         if not data:
             return {"none_gist": "А где?"}
         return data
@@ -64,10 +66,11 @@ def get_gists(tta_data):
 
 def gist_files(tta_data):  #список файлов в гисте
     try:
-        gist_id = tta_data["gist_id"]
+        gist_index = tta_data["gist_id"]
+        gist_id = fetch_github_data("https://api.github.com/gists", tta_data)[int(tta_data["gist_id"])]["id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
         return {
-            f'gist_file|{gist_id}|{file["filename"]}': file["filename"]
+            f'gist_file|{gist_index}|{file["filename"]}': file["filename"]
             for file in gist["files"].values()
         }
     except requests.exceptions.RequestException as e:
@@ -75,13 +78,14 @@ def gist_files(tta_data):  #список файлов в гисте
 
 def code_file(tta_data):  #содержимое файла из гиста
     try:
-        gist_id = tta_data["gist_id"]
+        gist_id = fetch_github_data("https://api.github.com/gists", tta_data)[int(tta_data["gist_id"])]["id"]
         gist = fetch_github_data(f"https://api.github.com/gists/{gist_id}", tta_data)
         file_data = gist["files"].get(tta_data["gist_file"])
         if not file_data:
             return {"error": "Файл не найден в гисте"}
         return {"code": file_data["content"]}
-    except:
+    except Exception as e:
+        print(f"Ошибка при открытии файла: {e}")
         return {"code": f"Ошибка при получении кода: {str(e)}"}
 
 def save_token(tta_data):

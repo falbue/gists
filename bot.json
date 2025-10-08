@@ -13,15 +13,11 @@
 			"return":"main"
 		},
 
-		"tta_loading_menu":{
-			"text":"Загрузка..."
-		},
-
 		"main":{
 			"loading":true,
 			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
 			"keyboard":{
-				"function":"get_my_gists",
+				"function":"get_gists",
 				"url:https://gist.github.com":"\\Создать gist"
 			}
 		},
@@ -85,9 +81,10 @@
 	},
 
 
-	"buttons":{
-		"return":"‹ Назад"
-	},
+	"variables": {
+        "tta_return": "‹ Назад",
+        "tta_loading":"loading..."
+    },
 
 
 	"commands":{

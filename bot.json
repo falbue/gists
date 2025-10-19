@@ -80,6 +80,22 @@
 		
 	},
 
+	"inline":{
+		"default":{
+			"tta_button":"Проверка",
+			"tta_link":"start",
+			
+			"test":{
+				"title":"Проверка",
+				"description":"Описание",
+				"text":"Проверка текста",
+				"keyboard":{
+					"test":"🔄"
+				}
+			}
+		}
+	},
+
 
 	"variables": {
         "tta_return": "‹ Назад",

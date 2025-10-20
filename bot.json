@@ -12,56 +12,97 @@
       "return": "main"
     },
 
-		"token":{
-			"text":"{token}",
-			"function":"get_user_token",
-			"return":"main"
-		},
-
-		"none_gist":{
-			"popup":{
-				"text":"Ваши гисты не загрузились?\n\nПричина - их просто нет",
-				"size":"big",
-				"menu_block":true
-			}
-		},
-
-
-		"info":{
-			"text":"Бот создан на [TTA](https://github.com/falbue/TelegramTextApp)\nGithub бота: [тык](https://github.com/falbue/gists)",
-			"return":"main"
-		}
-		
-	},
-
-
-	"variables": {
-        "tta_return": "‹ Назад",
-        "tta_loading":"Загрузка...",
-        "tta_pagination_back": "‹",
-        "tta_pagination_next": "›"
+    "main": {
+      "loading": true,
+      "text": "Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
+      "keyboard": {
+        "function": "get_gists",
+        "url:https://gist.github.com": "\\Создать gist"
+      }
     },
 
+    "gist|{gist_id}": {
+      "loading": true,
+      "text": "{gist_description}",
+      "function": "gist_data",
+      "keyboard": "gist_files",
+      "return": "main"
+    },
 
-	"commands":{
-		"start":{
-			"description":"🔄 Перезапуск бота",
-			"menu":"main"
-		},
+    "gist_file|{gist_id}|{gist_file}": {
+      "loading": true,
+      "text": "```\n{code}\n```",
+      "function": "code_file",
+      "return": "gist|{gist_id}"
+    },
 
-		"new_token":{
-			"description":"📌 Вставить новый токен",
-			"menu":"new_token"
-		},
+    "add_token": {
+      "text": "Создайте токен в [настройках github](https://github.com/settings/tokens/new) для того, что бы ваши гисты отобразились и добавьте его в бота\n\nОбязательно установите параметр `gist - Create gists`, для того что бы приватные гисты отобразились в боте",
+      "input": {
+        "data": "github_token",
+        "menu": "main",
+        "function": "save_token"
+      },
+      "keyboard": {
+        "url:https://github.com/settings/tokens/new": "Создать токен"
+      },
+      "return": "main"
+    },
 
-		"token":{
-			"description":"💬 Получить текущий токен",
-			"menu":"token"
-		},
+    "new_token": {
+      "text": "Вы действительно хотите изменить токен?",
+      "keyboard": {
+        "add_token": "🔄 Изменить токен",
+        "main": "\\❌ Отмена"
+      }
+    },
 
-		"info":{
-			"description":"ℹ️ Подробное описание",
-			"menu":"info" 
-		}
-	}
+    "token": {
+      "text": "{token}",
+      "function": "get_user_token",
+      "return": "main"
+    },
+
+    "none_gist": {
+      "popup": {
+        "text": "Ваши гисты не загрузились?\n\nПричина - их просто нет",
+        "size": "big",
+        "menu_block": true
+      }
+    },
+
+    "info": {
+      "text": "Бот создан на [TTA](https://github.com/falbue/TelegramTextApp)\nGithub бота: [тык](https://github.com/falbue/gists)",
+      "return": "main"
+    }
+  },
+
+  "variables": {
+    "tta_return": "‹ Назад",
+    "tta_loading": "Загрузка...",
+    "tta_pagination_back": "‹",
+    "tta_pagination_next": "›"
+  },
+
+  "commands": {
+    "start": {
+      "description": "🔄 Перезапуск бота",
+      "menu": "main"
+    },
+
+    "new_token": {
+      "description": "📌 Вставить новый токен",
+      "menu": "new_token"
+    },
+
+    "token": {
+      "description": "💬 Получить текущий токен",
+      "menu": "token"
+    },
+
+    "info": {
+      "description": "ℹ️ Подробное описание",
+      "menu": "info"
+    }
+  }
 }

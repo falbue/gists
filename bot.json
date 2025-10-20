@@ -1,62 +1,16 @@
 {
-	"bot":{
-		"name":"Gist",
-		"short_description":"Эксперимент для Github Gist",
-		"description":"Бот на стадии альфа теста\n\nПо всем вопросам @falbue"
-	},
+  "bot": {
+    "name": "Gist",
+    "short_description": "Эксперимент для Github Gist",
+    "description": "Бот на стадии альфа теста\n\nПо всем вопросам @falbue"
+  },
 
-	"menu":{
-
-		"none_menu":{
-			"loading":true,
-			"text":"Меню `{menu_name}` не найдено",
-			"return":"main"
-		},
-
-		"main":{
-			"loading":true,
-			"text":"Ваши гисты\nДля создания нового гиста, перейдите на сайт [Github Gists](https://gist.github.com)",
-			"keyboard":{
-				"function":"get_gists",
-				"url:https://gist.github.com":"\\Создать gist"
-			}
-		},
-
-		"gist|{gist_id}":{
-			"loading":true,
-			"text":"{gist_description}",
-			"function":"gist_data",
-			"keyboard":"gist_files",
-			"return":"main"
-		},
-
-		"gist_file|{gist_id}|{gist_file}":{
-			"loading":true,
-			"text":"```\n{code}\n```",
-			"function":"code_file",
-			"return":"gist|{gist_id}"
-		},
-
-		"add_token":{
-			"text":"Создайте токен в [настройках github](https://github.com/settings/tokens/new) для того, что бы ваши гисты отобразились и добавьте его в бота\n\nОбязательно установите параметр `gist - Create gists`, для того что бы приватные гисты отобразились в боте",
-			"input":{
-				"data":"github_token",
-				"menu":"main",
-				"function":"save_token"
-			},
-			"keyboard":{
-				"url:https://github.com/settings/tokens/new":"Создать токен"
-			},
-			"return":"main"
-		},
-
-		"new_token":{
-			"text":"Вы действительно хотите изменить токен?",
-			"keyboard":{
-				"add_token":"🔄 Изменить токен",
-				"main":"\\❌ Отмена"
-			}
-		},
+  "menu": {
+    "none_menu": {
+      "loading": true,
+      "text": "Меню `{menu_name}` не найдено",
+      "return": "main"
+    },
 
 		"token":{
 			"text":"{token}",

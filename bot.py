@@ -1,9 +1,7 @@
 import requests
-import json
 from TelegramTextApp.utils.database import SQL_request
 from TelegramTextApp.utils.utils import print_json
 import TelegramTextApp
-import os
 
 
 def create_tokens():
@@ -16,9 +14,9 @@ def create_tokens():
     )""")
 
 
-def get_token(tta_data):
-    user_id = tta_data["id"]
-    result = SQL_request(
+def get_token(tta_data: dict[str, str]) -> str | None:
+    user_id: str = tta_data["id"]
+    result: str = SQL_request(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='github_tokens';"
     )
     if not result:
@@ -32,7 +30,7 @@ def get_token(tta_data):
         return None
 
 
-def fetch_github_data(url, tta_data):
+def fetch_github_data(url: str, tta_data: dict[str, str]) -> dict[str, str]:
     TOKEN = get_token(tta_data)
     if not TOKEN:
         return None
